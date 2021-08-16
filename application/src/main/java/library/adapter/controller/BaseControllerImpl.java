@@ -34,7 +34,7 @@ public abstract class BaseControllerImpl {
                     // appApi.listNamespacedDeployment("library", null, null, null, null, "app=library-msa", null, null, null, null)
                         // .getItems().get(0).getStatus().getAvailableReplicas();// .stream().forEach(System.out::println);
                 var count= new AtomicInteger(0);    
-                var pods = coreApi.listNamespacedPod("library", null, null, null, null, "app=library-msa", null, null, null, null)
+                var pods = coreApi.listNamespacedPod("library", null, null, null, null, "app=library-msa", null, null, null, null,null)
                     .getItems().stream()
                         .map(pod -> pod.getMetadata().getName())
                         .collect(toMap(Function.identity(), value -> count.getAndIncrement()));
