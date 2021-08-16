@@ -1,0 +1,17 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGateway
+metadata:
+  name: library-gateway
+spec:
+  count: 3
+  api:
+    title: "Library Application APIs"
+    description: "RESTful APIs offered by Reader and Book services."
+    version: "1.0.0"
+    serverUrl: http://gateway.library.example.com/
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedMethods:
+        - "*"
+       

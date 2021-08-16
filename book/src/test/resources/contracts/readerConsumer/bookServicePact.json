@@ -1,0 +1,126 @@
+{
+  "consumer": {
+    "name": "readerService"
+  },
+  "provider": {
+    "name": "bookService"
+  },
+  "interactions": [
+    {
+      "description": "When a GET request to retrieve books specifies a non-existent reader id , no borrowed books are returned",
+      "providerState": "Provider cannot find books borrowed by reader 9999",
+      "request": {
+        "method": "GET",
+        "path": "/books",
+        "query": "reader=9999",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+        ],
+        "matchingRules": {
+          "body": {
+            "$[*]": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 0
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "When a GET request to retrieve books specifying a reader id is made, all books borrowed by they are returned",
+      "providerState": "Reader 1 exists",
+      "request": {
+        "method": "GET",
+        "path": "/books",
+        "query": "reader=1",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [{
+          "id": 100,
+          "name": "Name",
+          "author": "Author",
+          "genre": "Genre",
+          "publisher": "Publisher",
+          "readerId": 1
+        }],
+        "matchingRules": {
+          "body": {
+            "$[*].id": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9]+"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[*].name": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z0-9\\s]+"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[*].author": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z0-9\\s]+"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[*].genre": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z0-9\\s]+"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$[*].publisher": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[a-zA-Z0-9\\s]+"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.13"
+    }
+  }
+}

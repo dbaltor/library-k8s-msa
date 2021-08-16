@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/header.html :: header(pageTitle='Main Page')">
+</head>
+<body>
+    <table style="margin-left:auto;margin-right:auto;">
+        <tbody>
+            <tr>
+                <td>
+                    <img th:src="@{springboot.png}" width="200" height="200"/>
+                </td>
+                <span th:if="${uiConfig.tanzu}">
+                    <td>
+                        <img th:src="@{heart.png}" width="200" height="200"/>
+                    </td> 
+                    <td>
+                        <img th:src="@{k8s.png}" width="200" height="200"/>
+                    </td> 
+                </span>
+            </tr>
+        </tbody>
+    </table>
+    <h1><center>Welcome to our Library</center></h1>
+    <div>
+        <h2><a href="/listreaders">List of Readers</a></h2>
+    </div>
+    <p/><p/>
+    <div>
+        <h2><a href="listbooks">List of Books</a></h2>
+    </div>
+    <p/><p/><p/><p/>
+    <table width="300">
+        <tbody>
+            <tr>
+                <td>
+                    <button onclick="callAndAlert('/loadreaders')">Load Readers</button>
+                </td>
+                <td>
+                    <button onclick="callAndAlert('/loadbooks')">Load Books</button>
+                </td>
+                <td>
+                    <button onclick="cleanUpDatabases()">Clean Up Data</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/header.html :: header(pageTitle='List of Readers')">
+</head>
+<body>
+    <h1 th:text="${readerId} ? 'Reader ID ' + ${readerId} : 'List of Readers'"/>
+    <table border="1">
+        <thead>
+            <tr>
+                <td><b>Id</b></td>
+                <td><b>First Name</b></td>
+                <td><b>Last Name</b></td>
+                <td><b>Date of Birth</b></td>
+                <td><b>Address</b></td>
+                <td><b>Phone</b></td>
+                <td><b>Borrowed</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="reader: ${readers}">
+                <td th:text="${reader.id}"/>
+                <td th:text="${reader.firstName}"/>
+                <td th:text="${reader.lastName}"/>
+                <td th:text="${#dates.format(reader.dob, 'dd-MM-yyyy')}"/>
+                <td th:text="${reader.address}"/>
+                <td th:text="${reader.phone}"/>
+                <td><a th:href="@{'listbooks?reader=' + ${reader.id}}" th:text="${#lists.isEmpty(reader.books)} ? '' : 'Books'" /></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

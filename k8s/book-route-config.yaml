@@ -1,0 +1,74 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: library-book-service-route-config
+spec:
+  service:
+    name: library-book-service
+  routes:
+    - predicates:
+        - Path=/library-book-service/books
+        - Method=GET
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-book-service/books/commands/load
+        - Query=count
+        - Method=POST  
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-book-service/books/commands/cleanup
+        - Method=POST
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-book-service/books/commands/borrow
+        - Method=POST
+      filters:
+        - StripPrefix=1
+      model:
+        requestBody:
+          description: List of books being borrowed by user
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: Borrowing request schema
+                properties:
+                  readerId:
+                    type: integer
+                    format: int32
+                  booksIds:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                required:
+                  - readerId
+                  - booksId
+    - predicates:
+        - Path=/library-book-service/books/commands/return
+        - Method=POST
+      filters:
+        - StripPrefix=1
+      model:
+        requestBody:
+          description: List of books being returned by user
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: Returning request schema
+                properties:
+                  readerId:
+                    type: integer
+                    format: int32
+                  booksIds:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                required:
+                  - readerId
+                  - booksId   

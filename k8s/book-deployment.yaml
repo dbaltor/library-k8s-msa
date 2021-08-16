@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: library-book-service
+  name: library-book-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library-book-service
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: library-book-service
+    spec:
+      containers:
+      - image: ((REGISTRY))/library-book:1.0.0
+        name: book
+        env:
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: postgresql-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: postgresql-password
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: library-book-service
+  name: library-book-service
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: library-book-service
+  type: ClusterIP
+status:
+  loadBalancer: {}

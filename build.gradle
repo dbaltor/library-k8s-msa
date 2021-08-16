@@ -1,0 +1,18 @@
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    version = '1.0.0'
+    ext {
+    	springBootVersion = '2.4.4'
+        cloudServicesDependencies = '3.1.5.RELEASE'
+        set('springCloudVersion', "2020.0.1")
+        resilience4jVersion = '1.6.0'
+    }
+}
+
+configure(subprojects.findAll { it.name == 'application' || it.name == 'book' || it.name == 'reader' }) {
+}

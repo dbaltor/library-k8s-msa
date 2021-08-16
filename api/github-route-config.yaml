@@ -1,0 +1,11 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: github-routes
+spec:
+  routes:
+  - uri: https://github.com
+    predicates:
+      - Path=/github/**
+    filters:
+      - StripPrefix=1

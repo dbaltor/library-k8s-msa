@@ -1,0 +1,78 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: library-reader-service-route-config
+spec:
+  service:
+    name: library-reader-service
+  routes:
+    - predicates:
+        - Path=/library-reader-service/readers
+        - Method=GET
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-reader-service/readers/commands/load
+        - Query=count
+        - Method=POST  
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-reader-service/readers/commands/cleanup
+        - Method=POST
+      filters:
+        - StripPrefix=1
+    - predicates:
+        - Path=/library-reader-service/readers/{id}/commands/validatebookborrowing
+        - Method=POST
+      filters:
+        - StripPrefix=1
+      model:
+        requestBody:
+          description: Request for validating books being borrowed by a given user
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: Borrowing validation request schema
+                properties:
+                  booksToValidate:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                  borrowedBooksByReader:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                required:
+                  - booksToValidate
+                  - borrowedBooksByReader
+    - predicates:
+        - Path=/library-reader-service/readers/{id}/commands/validatebookreturning
+        - Method=POST
+      filters:
+        - StripPrefix=1
+      model:
+        requestBody:
+          description: Request for validating books being returned by a given userr
+          content:
+            'application/json':
+              schema:
+                type: object
+                description: Returning validation request schema
+                properties:
+                  booksToValidate:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                  borrowedBooksByReader:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                required:
+                  - booksToValidate
+                  - borrowedBooksByReader 

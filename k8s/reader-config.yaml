@@ -1,0 +1,62 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: library-reader-service
+data:
+  application.properties: |-
+    #########################  
+    ### Common properties ###
+    ######################### 
+    spring.profiles.active=kubernetes
+    spring.cloud.kubernetes.discovery.all-namespaces=true
+    
+    feign.client.config.default.connectTimeout=20000
+    feign.client.config.default.readTimeout=20000
+    feign.okhttp.enabled=true
+    #feign.hystrix.enabled=true
+    #hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=20000
+    #hystrix.command.default.execution.timeout.enabled=false  # was never used in this project anyway
+
+    logging.level.org.springframework=INFO
+    #logging.level.org.springframework.web=DEBUG
+    #logging.level.org.springframework.security=DEBUG
+    logging.level.com.zaxxer=DEBUG
+    #logging.level.root=ERROR
+    logging.level.root=INFO
+
+    #feign.client.config.default.loggerLevel=full
+    #logging.level.library.adapter.gateway.port.BookClient=DEBUG
+    #logging.level.library.adapter.gateway.port.ReaderClient=DEBUG
+    
+    #################################  
+    ### Reader service properties ###
+    #################################
+    reader.default-page-size=20
+    reader.default-load-size=10
+    reader.max-allowed-borrowed-books=6
+
+    feign.client.config.default.errorDecoder=reader.adapter.gateway.config.Propagate4xxFeignErrorDecoder
+    resilience4j.circuitbreaker.configs.default.ignoreExceptions[0]=reader.adapter.gateway.config.Propagate4xxFeignErrorDecoder.Feign4xxResponseException
+
+    management.endpoints.web.exposure.include=refresh
+
+    spring.datasource.hikari.connectionTimeout=20000
+    spring.datasource.hikari.maximumPoolSize=4
+    spring.datasource.hikari.poolName=HikariPoolZZZ
+
+    # update database schema as per the model (not used by Spring Data JDBC - using Flyway)
+    #spring.sql.init.mode=always
+    #spring.datasource.initialization-mode=always ## Deprecated in SB 2.5
+    #spring.jpa.hibernate.ddl-auto=update
+
+    # Enabling H2 Console
+    #spring.h2.console.enabled=true
+    # Custom H2 Console URL
+    #spring.h2.console.path=/h2
+
+    # PostgreSQL
+    spring.datasource.url=jdbc:postgresql://reader-service-db-postgresql:5432/readerdb
+    spring.datasource.username=${DB_USERNAME}
+    spring.datasource.password=${DB_PASSWORD}
+
+

@@ -1,0 +1,65 @@
+buildscript {
+	ext { 
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies { 
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+	}
+}
+
+group = 'cf.dbaltor'
+
+apply plugin: "org.springframework.boot"
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'application'
+
+application {
+    mainClassName = 'library.LibraryApplication'
+}
+
+applicationDefaultJvmArgs = ["--enable-preview"]
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'io.github.openfeign:feign-okhttp'
+	implementation "io.github.resilience4j:resilience4j-spring-boot2:${resilience4jVersion}"
+    //implementation("io.github.resilience4j:resilience4j-all:${resilience4jVersion}") 
+	// required due to https://github.com/resilience4j/resilience4j/issues/1151
+	implementation "io.github.resilience4j:resilience4j-circuitbreaker:${resilience4jVersion}" 
+	implementation "io.github.resilience4j:resilience4j-timelimiter:${resilience4jVersion}" 
+	//implementation 'org.springframework.boot:spring-boot-starter-aop' // required by resilience4j
+	////implementation "io.micrometer:micrometer-registry-prometheus" // may be used by resilience4j"
+
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	
+	testImplementation 'junit:junit:4.13'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation 'com.github.javafaker:javafaker:1.0.1'
+	
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scg-operator-ingress
+  namespace: spring-cloud-gateway
+spec:
+  rules:
+  - host: scg.library.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: scg-operator
+            port: 
+              number: 80

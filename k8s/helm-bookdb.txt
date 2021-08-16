@@ -1,0 +1,28 @@
+helm install book-service-db --set existingSecret=db-secret,postgresqlDatabase=bookdb bitnami/postgresql                                                                        ✔  10042  18:27:34
+NAME: book-service-db
+LAST DEPLOYED: Mon Aug  2 18:45:38 2021
+NAMESPACE: library
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+** Please be patient while the chart is being deployed **
+
+PostgreSQL can be accessed via port 5432 on the following DNS name from within your cluster:
+
+    book-service-db-postgresql.library.svc.cluster.local - Read/Write connection
+
+To get the password for "postgres" run:
+
+    export POSTGRES_PASSWORD=$(kubectl get secret --namespace library db-secret -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+
+To connect to your database run the following command:
+
+    kubectl run book-service-db-postgresql-client --rm --tty -i --restart='Never' --namespace library --image docker.io/bitnami/postgresql:11.11.0-debian-10-r31 --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql --host book-service-db-postgresql -U postgres -d bookdb -p 5432
+
+
+
+To connect to your database from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace library svc/book-service-db-postgresql 5432:5432 &
+    PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d bookdb -p 5432

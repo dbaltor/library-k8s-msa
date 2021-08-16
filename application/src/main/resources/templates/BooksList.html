@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/header.html :: header(pageTitle='List of Books')">
+</head>
+<body> 
+    <h1 th:text="${readerId} ? ' List of Books Borrowed by Reader ID ' + ${readerId} : 'List of Books'"/>
+    <table border="1">
+        <thead>
+            <tr>
+                <td><b>Id</b></td>
+                <td><b>Name</b></td>
+                <td><b>Author</b></td>
+                <td><b>Genre</b></td>
+                <td><b>Publisher</b></td>
+                <td><b>Borrowed by</b></td>
+                <td><b>Action</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="book: ${books}">
+                <td th:text="${book.id}"/>
+                <td th:text="${book.name}"/>
+                <td th:text="${book.author}"/>
+                <td th:text="${book.genre}"/>
+                <td th:text="${book.publisher}"/>
+                <span th:if="${book.readerId}">
+                    <td><a th:href="@{'/listreaders?reader=' + ${book.readerId}}" th:text="${book.readerId}"/></td>
+                    <td><a th:href="'javascript:callAndAlert(\'/returnbooks\', { \'readerId\': \'' + ${book.readerId} + '\', \'bookIds\': [\'' + ${book.id} + '\'] }, true)'">Return</a></td>
+                </span>
+                <span th:unless="${book.readerId}">
+                    <td>AVAILABLE</td>
+                    <td><a th:href="'javascript:borrowBooks([\'' + ${book.id} + '\'])'">Borrow</a></td>
+                </span>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

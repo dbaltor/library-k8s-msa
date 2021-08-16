@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="header (pageTitle)">
+    <title th:text="'Library: ' + ${pageTitle}">Page title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Cache-control" content="no-cache">
+    <script src="/client.js"></script>
+    <th:block th:switch="${uiConfig.bgColor}">
+        <style th:case="'0'">body {background-color: mediumseagreen;}</style>
+        <style th:case="'1'">body {background-color: lightblue;}</style>
+        <style th:case="'2'">body {background-color: yellow;}</style>
+        <style th:case="-1">body {background-color: red;}</style>
+        <style th:case="*">body {background-color: lightsalmon;}</style>
+   </th:block>
+</th:block>
+</html>

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: virtual-library-ingress
+  namespace: library
+spec:
+  rules:
+  - host: library.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: library-msa
+            port: 
+              number: 8080
+
+

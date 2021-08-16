@@ -1,0 +1,9 @@
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayMapping
+metadata:
+  name: library-book-service-route-mapping
+spec:
+  gatewayRef:
+    name: library-gateway
+  routeConfigRef:
+    name: library-book-service-route-config

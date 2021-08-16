@@ -1,0 +1,42 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: library-msa
+data:
+  application.properties: |-
+    #########################  
+    ### Common properties ###
+    #########################
+    spring.profiles.active=kubernetes
+    spring.cloud.kubernetes.discovery.all-namespaces=true
+
+    feign.client.config.default.connectTimeout=20000
+    feign.client.config.default.readTimeout=20000
+    feign.okhttp.enabled=true
+    #feign.hystrix.enabled=true
+    #hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=20000
+    #hystrix.command.default.execution.timeout.enabled=false  # was never used in this project anyway
+
+    logging.level.org.springframework=INFO
+    #logging.level.org.springframework.web=DEBUG
+    #logging.level.org.springframework.security=DEBUG
+    logging.level.com.zaxxer=DEBUG
+    #logging.level.root=ERROR
+    logging.level.root=INFO
+
+    #feign.client.config.default.loggerLevel=full
+    #logging.level.library.adapter.gateway.port.BookClient=DEBUG
+    #logging.level.library.adapter.gateway.port.ReaderClient=DEBUG
+
+    ##############################  
+    ### Library App properties ###
+    ##############################
+    feign.client.config.default.errorDecoder=library.adapter.gateway.config.Propagate4xxFeignErrorDecoder
+    resilience4j.circuitbreaker.configs.default.ignoreExceptions[0]=library.adapter.gateway.config.Propagate4xxFeignErrorDecoder.Feign4xxResponseException
+
+    management.endpoints.web.exposure.include=refresh
+
+    stubrunner.idsToServiceIds.book=library-book-service
+    stubrunner.idsToServiceIds.reader=library-reader-service
+
+    #library.red-background=true

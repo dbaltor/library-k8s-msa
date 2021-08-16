@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: library-msa
+  name: library-msa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library-msa
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: library-msa
+    spec:
+      containers:
+      - image: ((REGISTRY))/library-application:1.0.0
+        name: book
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: library-msa
+  name: library-msa
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: library-msa
+  type: ClusterIP
+status:
+  loadBalancer: {}
