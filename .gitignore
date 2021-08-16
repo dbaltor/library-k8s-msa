@@ -10,8 +10,6 @@
 .gradle
 build
 bin
-.settings/*
-.project
 */.classpath
 
 # Compiled class file
