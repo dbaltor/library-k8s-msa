@@ -54,7 +54,7 @@ Execute the `./scripts/build.sh` script to build everything and push the newly b
 
 You are going to need both **kubectl** and **helm** installed on your workstation. Make sure you are connected to your Kubernetes cluster before starting. The installation will create a *library namespace* to hold everything.
 
-1. Run <code>./scripts/init.sh CONTAINER-REGISTRY-URL</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloanding both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh PATH-TO-SCG4K8s-INSTALL-DIR PATH-TO-API-PORTAL-INSTALL-DIR CONTAINER-REGISTRY-URL</code>, passing in the  
+1. Run <code>./scripts/init.sh CONTAINER-REGISTRY-URL</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloanding both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh PATH-TO-SCG4K8s-INSTALL-DIR PATH-TO-API-PORTAL-INSTALL-DIR CONTAINER-REGISTRY-URL</code>, passing in  
    1. PATH-TO-SCG4K8s-INSTALL-DIR: path to the Spring Cloud Gateway directory
    2. PATH-TO-API-PORTAL-INSTALL-DIR: path to the API Portal diractory
    3. CONTAINER-REGISTRY-URL: URL to the registry where the built images have been uploaded to
