@@ -1,7 +1,4 @@
 allprojects {
-    repositories {
-        jcenter()
-    }
 }
 
 subprojects {
