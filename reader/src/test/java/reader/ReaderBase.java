@@ -1,12 +1,10 @@
 package reader;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import io.restassured.config.EncoderConfig;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -30,7 +28,6 @@ import reader.domain.port.ReaderEntity.ReturningErrors;
 
 import com.github.javafaker.Faker;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ReaderApplication.class)
 public abstract class ReaderBase {
     @Autowired ReaderServiceController readerServiceController;
@@ -41,7 +38,7 @@ public abstract class ReaderBase {
     private static final int NUM_TEST_READERS = 10;
     private final Faker faker = new Faker();
  
-    @Before
+    @BeforeEach
     public void setup() {
         RestAssuredMockMvc.standaloneSetup(readerServiceController);
         

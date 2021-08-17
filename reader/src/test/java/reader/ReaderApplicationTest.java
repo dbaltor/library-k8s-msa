@@ -5,13 +5,11 @@ import reader.adapter.gateway.BookServiceGateway;
 import reader.dto.Reader;
 import reader.usecase.port.ReaderRepository;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.util.Date;
@@ -20,11 +18,9 @@ import java.util.Optional;
 
 import lombok.val;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ReaderApplication.class)
 @AutoConfigureMockMvc
 public class ReaderApplicationTest{
@@ -35,7 +31,7 @@ public class ReaderApplicationTest{
 	
 	private static final int NUM_TEST_READERS = 5;
 
-    @After
+    @AfterEach
     public void teardown() {
 		// Delete all readers
 		readerService.cleanUpDatabase();
@@ -69,6 +65,6 @@ public class ReaderApplicationTest{
 			//When
 			val readers = readerService.retrieveReaders(Optional.empty(), Optional.empty());
 			//Then
-			assertThat(readers.size(), is(NUM_TEST_READERS));
+			assertEquals(NUM_TEST_READERS, readers.size());
 	}
 }

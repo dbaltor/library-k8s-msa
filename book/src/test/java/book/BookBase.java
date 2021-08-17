@@ -1,12 +1,11 @@
 package book;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
@@ -26,7 +25,6 @@ import book.usecase.exception.ReturningException;
 
 import com.github.javafaker.Faker;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookApplication.class)
 public abstract class BookBase {
     @Autowired BookServiceController bookServiceController;
@@ -37,7 +35,7 @@ public abstract class BookBase {
     private static final int NUM_TEST_BOOKS = 100;
     private final Faker faker = new Faker();
 
-    @Before
+    @BeforeEach
     public void setup() throws BorrowingException, ReturningException {
         RestAssuredMockMvc.standaloneSetup(bookServiceController);
             

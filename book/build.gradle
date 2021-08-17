@@ -1,9 +1,6 @@
-repositories {
-	jcenter()
-}
 buildscript {
 	ext { 
-		verifierVersion = '2.2.4.RELEASE'
+		verifierVersion = '3.0.3'
 	}
 	repositories { 
 		mavenCentral()
@@ -67,9 +64,11 @@ dependencies {
 
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
-
-	testImplementation 'junit:junit:4.13'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	test {
+  		useJUnitPlatform()
+	}
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

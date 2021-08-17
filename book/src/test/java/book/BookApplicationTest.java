@@ -7,13 +7,11 @@ import book.usecase.port.BookRepository;
 import book.usecase.exception.BorrowingException;
 import book.usecase.exception.ReturningException;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
@@ -26,11 +24,9 @@ import static java.util.stream.Collectors.*;
 import com.github.javafaker.Faker;
 import lombok.val;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = BookApplication.class,
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,7 +45,7 @@ public class BookApplicationTest{
 	private final Faker faker = new Faker();
 	private static final int NUM_TEST_BOOKS = 20;
 	
-    @After
+    @AfterEach
     public void teardown() {
 		// Delete all books
 		bookService.cleanUpDatabase();
@@ -90,7 +86,7 @@ public class BookApplicationTest{
 			//When
 			val books = bookService.findBooksByIds(ids);
 			//Then
-			assertThat(books.size(), is(NUM_TEST_BOOKS));
+			assertEquals(NUM_TEST_BOOKS, books.size());
 	}
 
 	@Test
@@ -105,7 +101,7 @@ public class BookApplicationTest{
 		//When
 		val borrowedBooks = bookService.findBooksByReaderId(1L);
 		//Then
-		assertThat(borrowedBooks.size(), is(3));
+		assertEquals(3, borrowedBooks.size());
 	}	
 
 	@Test
@@ -115,7 +111,7 @@ public class BookApplicationTest{
 			//When
 			val books = bookService.retrieveBooks(Optional.empty(), Optional.empty());
 			//Then
-			assertThat(books.size(), is(NUM_TEST_BOOKS));
+			assertEquals(NUM_TEST_BOOKS, books.size());
 	}
 
 	@Test
@@ -130,7 +126,7 @@ public class BookApplicationTest{
 			bookService.borrowBooks(books, 1L);
 			// Then
 			val borrowedBooks = bookService.findBooksByReaderId(1L);
-			assertThat(borrowedBooks.size(), is(books.size()));
+			assertEquals(books.size(), borrowedBooks.size());
 	}
 
 	@Test
@@ -146,6 +142,6 @@ public class BookApplicationTest{
 			bookService.returnBooks(books, 1L);
 			// Then
 			val borrowedBooks = bookService.findBooksByReaderId(1L);
-			assertThat(borrowedBooks.size(), is(0));
+			assertEquals(0, borrowedBooks.size());
 	}
 }
