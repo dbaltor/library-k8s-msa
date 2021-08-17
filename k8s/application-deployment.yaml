@@ -18,7 +18,7 @@ spec:
         app: library-msa
     spec:
       containers:
-      - image: ((REGISTRY))/library-application:1.0.0
+      - image: ((REGISTRY))/library-application:latest
         name: book
         resources: {}
 status: {}
