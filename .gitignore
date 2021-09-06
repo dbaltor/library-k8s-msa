@@ -10,6 +10,7 @@
 build
 bin
 */.classpath
+reports
 
 # Compiled class file
 *.class
