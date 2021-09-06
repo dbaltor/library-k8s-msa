@@ -11,6 +11,19 @@ subprojects {
         cloudServicesDependencies = '3.1.5.RELEASE'
         set('springCloudVersion', "2020.0.3")
     }
+    
+    apply plugin: 'application'
+
+    // Disable the test report for the individual test task
+    test {
+        reports.html.enabled = false
+    }
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("./reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
 }
 
 configure(subprojects.findAll { it.name == 'application' || it.name == 'book' || it.name == 'reader' }) {

@@ -1,0 +1,48 @@
+---
+resources:
+- name: source-code
+  type: git
+  source:
+    uri: https://github.com/dbaltor/library-k8s-msa.git
+    branch: master
+
+jobs:
+- name: test-app
+  plan:
+  - get: source-code
+    trigger: true
+  - task: run-tests
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      inputs:
+      - name: source-code
+      outputs:
+      - name: reports
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          cd source-code
+          ./gradlew testReport --parallel
+          cp -R reports ../reports
+  - task: review-results
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      inputs:
+      - name: reports
+      run:
+        path: find
+        args: [.]
+
+# fly -t tbs set-pipeline -p library-msa -c ./ci/pipeline.yaml 

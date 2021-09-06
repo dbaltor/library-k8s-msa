@@ -13,7 +13,6 @@ group = 'cf.dbaltor'
 
 apply plugin: "org.springframework.boot"
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'application'
 
 application {
     mainClassName = 'library.LibraryApplication'
@@ -58,4 +57,5 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
+
 
