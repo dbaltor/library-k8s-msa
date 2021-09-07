@@ -1,6 +1,7 @@
 buildscript {
 	ext { 
-        verifierVersion = '3.0.3'
+        verifierVersion = '2.2.4.RELEASE'
+        // verifierVersion = '3.0.3'
 	}
 	repositories { 
 		mavenCentral()
