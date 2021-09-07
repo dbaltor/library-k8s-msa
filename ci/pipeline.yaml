@@ -29,7 +29,7 @@ jobs:
         - -exec
         - |
           cd source-code
-          ./gradlew testReport
+          ./gradlew --no-daemon testReport --parallel
           cp -R reports ../reports
   - task: review-results
     config:
