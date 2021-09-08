@@ -1,6 +1,6 @@
 buildscript {
 	ext { 
-        verifierVersion = '2.2.4.RELEASE'
+        verifierVersion = '2.2.4.RELEASE' // Required to use gradle publishToMavenLocal
         // verifierVersion = '3.0.3'
 	}
 	repositories { 
@@ -69,6 +69,7 @@ dependencies {
 	test {
   		useJUnitPlatform()
 	}
+	testImplementation 'junit:junit:4.13' // SC Contract 2.2 requires JUnit 4
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
