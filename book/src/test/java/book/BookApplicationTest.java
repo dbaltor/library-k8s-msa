@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureStubRunner(
-		ids = "cf.dbaltor:reader:1.0.0:stubs:8002",
+		ids = "cf.dbaltor:reader:1.0.0:stubs",
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL,
 		consumerName = "bookConsumer"
 )

@@ -40,7 +40,7 @@ import lombok.val;
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureStubRunner(
-		ids = {"cf.dbaltor:book:1.0.0:stubs:8000", "cf.dbaltor:reader:1.0.0:stubs:8001"},
+		ids = {"cf.dbaltor:book:1.0.0:stubs", "cf.dbaltor:reader:1.0.0:stubs"},
 		stubsMode = StubRunnerProperties.StubsMode.LOCAL,
 		consumerName = "libraryConsumer"
 )
