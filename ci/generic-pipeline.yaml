@@ -1,35 +1,10 @@
 ---
-resource_types:
-- name: kpack-image
-  type: registry-image
-  source:
-    repository: gcr.io/cf-build-service-public/concourse-kpack-resource
-    tag: "1.0"
-
 resources:
 - name: source-code
   type: git
   source:
     uri: ((git-repo))
     branch: master
-- name: library-image
-  type: kpack-image
-  source:
-    image: "library-application"
-    namespace: "library-tbs"
-    kubeconfig: ((k8s-config.kubeconfig))
-- name: reader-image
-  type: kpack-image
-  source:
-    image: "library-reader"
-    namespace: "library-tbs"
-    kubeconfig: ((k8s-config.kubeconfig))
-- name: book-image
-  type: kpack-image
-  source:
-    image: "library-book"
-    namespace: "library-tbs"
-    kubeconfig: ((k8s-config.kubeconfig))
 
 jobs:
 - name: test-app
@@ -168,13 +143,10 @@ jobs:
 
 - name: deploy-app
   plan:
-  - in_parallel:
-    - get: library-image
-      trigger: true
-    - get: reader-image
-      trigger: true
-    - get: book-image
-      trigger: true
+  - get: source-code
+    passed:
+    - package-app
+    trigger: true
   - task: rollout-deployment
     config:
       platform: linux
@@ -204,4 +176,4 @@ jobs:
   #  params:
   #    KUBECONFIG: ((k8s-config.kubeconfig))
 
-#fly -t tkgi sp -p library-msa-imperative -c ./ci/pipeline-imperative.yaml --load-vars-from ./ci/resources/vars.yaml
+#fly -t tkgi sp -p generic-library-msa -c ./ci/pipeline-imperative.yaml --load-vars-from ./ci/resources/vars.yaml

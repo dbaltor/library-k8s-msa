@@ -10,7 +10,7 @@ resources:
 - name: source-code
   type: git
   source:
-    uri: https://github.com/dbaltor/library-k8s-msa.git
+    uri: ((git-repo))
     branch: master
 - name: library-image
   type: kpack-image
@@ -122,9 +122,9 @@ jobs:
           kubectl rollout restart deploy library-msa -n library
           kubectl rollout restart deploy library-reader-service -n library
           kubectl rollout restart deploy library-book-service -n library
-  #- task: recreate-deployment
-  #  file: source-code/pipeline/deploy-image.yml
+  #- task: rollout-deployment
+  #  file: ./ci/tasks/rollout.yaml
   #  params:
   #    KUBECONFIG: ((k8s-config.kubeconfig))
 
-# fly -t tbs set-pipeline -p library-msa -c ./pipeline.yaml 
+# fly -t tbs set-pipeline -p concourse-library-msa -c ./pipeline.yaml 
