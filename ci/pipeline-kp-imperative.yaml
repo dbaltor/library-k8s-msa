@@ -11,22 +11,6 @@ jobs:
   plan:
   - get: source-code
     trigger: true
-  - task: generate-kubeconfig
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: alpine}
-      outputs:
-      - name: kube-config
-      run:
-        path: sh
-        args:
-        - -exec
-        - |
-          echo -n "((k8s-config.kubeconfig))" > config
-          cat config
-          cp ./config ./kube-config
   - task: run-tests
     config:
       platform: linux
@@ -40,7 +24,6 @@ jobs:
         memory: 0
       inputs:
       - name: source-code
-      - name: kube-config
       outputs:
       - name: reports
       run:
@@ -48,9 +31,9 @@ jobs:
         args:
         - -exec
         - |
-          echo '# Installing kube config file required by SC k8s'
+          # Install kube config file required by SC K8s
           mkdir ~/.kube
-          cp ./kube-config/config ~/.kube/
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
           cd ./source-code
           ./gradlew reader:build -x test
           ./gradlew reader:publishToMavenLocal
@@ -58,7 +41,7 @@ jobs:
           ./gradlew book:publishToMavenLocal
           ./gradlew testReport
           cp -R reports ../reports
-  - task: check-results
+  - task: check-reports
     config:
       platform: linux
       image_resource:
@@ -69,14 +52,11 @@ jobs:
       run:
         path: find
         args: [.]
-  - put: application-image
-    params:
-      commitish: source-code/.git/ref
 - name: package-app
   plan:
   - get: source-code
-    #passed:
-    #- test-app
+    passed:
+    - test-app
     trigger: true
   - task: run-build-service
     config:
@@ -86,8 +66,6 @@ jobs:
         source: {repository: kpack/kp}
       inputs:
       - name: source-code
-      outputs:
-      - name: build-report
       run:
         path: sh
         args:
