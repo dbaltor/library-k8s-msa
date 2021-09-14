@@ -1,0 +1,207 @@
+---
+resource_types:
+- name: kpack-image
+  type: registry-image
+  source:
+    repository: gcr.io/cf-build-service-public/concourse-kpack-resource
+    tag: "1.0"
+
+resources:
+- name: source-code
+  type: git
+  source:
+    uri: ((git-repo))
+    branch: master
+- name: library-image
+  type: kpack-image
+  source:
+    image: "library-application"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
+- name: reader-image
+  type: kpack-image
+  source:
+    image: "library-reader"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
+- name: book-image
+  type: kpack-image
+  source:
+    image: "library-book"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
+
+jobs:
+- name: test-app
+  plan:
+  - get: source-code
+    trigger: true
+  - task: run-tests
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      container_limits:
+        cpu: 0
+        memory: 0
+      inputs:
+      - name: source-code
+      outputs:
+      - name: reports
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # Install kube config file required by SC K8s
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          cd ./source-code
+          ./gradlew reader:build -x test
+          ./gradlew reader:publishToMavenLocal
+          ./gradlew book:build -x test
+          ./gradlew book:publishToMavenLocal
+          ./gradlew testReport
+          cp -R reports ../reports
+  - task: check-reports
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      inputs:
+      - name: reports
+      run:
+        path: find
+        args: [.]
+- name: package-app
+  plan:
+  - get: source-code
+    passed:
+    - test-app
+    trigger: true
+  - in_parallel:
+    - task: package-library
+      params:
+        REGISTRY_PASSWORD: ((registry.password))
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: {repository: kpack/kp}
+        inputs:
+        - name: source-code
+        run:
+          path: sh
+          args:
+          - -exec
+          - |
+            # Installing kube config file required by kp
+            mkdir ~/.kube
+            echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+            # Patching the kpack image
+            kp image save library-application \
+              --namespace library-tbs \
+              --tag ((harbor-url))/((harbor-project))/library-application \
+              --git ((git-repo)) \
+              --git-revision ./source-code/.git/ref \
+              --env BP_GRADLE_BUILD_ARGUMENTS="--no-daemon application:assemble" \
+              --env BP_GRADLE_BUILT_MODULE=application \
+              --wait
+    - task: package-reader
+      params:
+        REGISTRY_PASSWORD: ((registry.password))
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: {repository: kpack/kp}
+        inputs:
+        - name: source-code
+        run:
+          path: sh
+          args:
+          - -exec
+          - |
+            # Installing kube config file required by kp
+            mkdir ~/.kube
+            echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+            # Patching the kpack image
+            kp image save library-reader \
+              --namespace library-tbs \
+              --tag ((harbor-url))/((harbor-project))/library-reader \
+              --git ((git-repo)) \
+              --git-revision ./source-code/.git/ref \
+              --env BP_GRADLE_BUILD_ARGUMENTS="--no-daemon reader:assemble" \
+              --env BP_GRADLE_BUILT_MODULE=reader \
+              --wait
+    - task: package-book
+      params:
+        REGISTRY_PASSWORD: ((registry.password))
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: {repository: kpack/kp}
+        inputs:
+        - name: source-code
+        run:
+          path: sh
+          args:
+          - -exec
+          - |
+            # Installing kube config file required by kp
+            mkdir ~/.kube
+            echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+            # Patching the kpack image
+            kp image save library-book \
+              --namespace library-tbs \
+              --tag ((harbor-url))/((harbor-project))/library-book \
+              --git ((git-repo)) \
+              --git-revision ./source-code/.git/ref \
+              --env BP_GRADLE_BUILD_ARGUMENTS="--no-daemon book:assemble" \
+              --env BP_GRADLE_BUILT_MODULE=book \
+              --wait
+
+- name: deploy-app
+  plan:
+  - in_parallel:
+    - get: library-image
+      trigger: true
+    - get: reader-image
+      trigger: true
+    - get: book-image
+      trigger: true
+  - task: rollout-deployment
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # Just restarting the K8s deployment as the manifests are referring to "latest"
+          # install curl
+          apk --no-cache add curl
+          # install kubectl
+          curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          # Install kube config file
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          # Restarting the deployments
+          kubectl rollout restart deploy library-msa -n library
+          kubectl rollout restart deploy library-reader-service -n library
+          kubectl rollout restart deploy library-book-service -n library
+  #- task: rollout-deployment
+  #  file: ./ci/tasks/rollout.yaml
+  #  params:
+  #    KUBECONFIG: ((k8s-config.kubeconfig))
+
+#fly -t tkgi sp -p library-msa-imperative -c ./ci/pipeline-imperative.yaml --load-vars-from ./ci/resources/vars.yaml
