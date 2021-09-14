@@ -1,0 +1,86 @@
+---
+resources:
+- name: source-code
+  type: git
+  source:
+    uri: https://github.com/dbaltor/library-k8s-msa.git
+    branch: master
+
+jobs:
+- name: test-app
+  plan:
+  - get: source-code
+    trigger: true
+  - task: install-kubeconfig
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: kube-config
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # install curl
+          apk --no-cache add curl
+          # install kubectl
+          curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          # generate kube config file (~/.kube/config)
+          kubectl config set-cluster k8s --server=https://kubernetes.default.svc \
+           --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+           --embed-certs=true
+          kubectl config set-credentials cluster-admin --client-certificate=/var/run/secrets/kubernetes.io/serviceaccount/token \
+           --embed-certs=true
+          # copy kube config to output directory
+          cp ~/.kube/config ./kube-config
+        #path: ./input-resources/init-kube-config.sh
+        #args: [./kube-config]
+  - task: run-tests
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      container_limits:
+        cpu: 0
+        memory: 0
+      inputs:
+      - name: source-code
+      - name: kube-config
+      outputs:
+      - name: reports
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          mkdir ~/.kube
+          cp ./kube-config/config ~/.kube/
+          cd ./source-code
+          ./gradlew reader:build -x test
+          ./gradlew reader:publishToMavenLocal
+          ./gradlew book:build -x test
+          ./gradlew book:publishToMavenLocal
+          ./gradlew testReport
+          cp -R reports ../reports
+  - task: review-results
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      inputs:
+      - name: reports
+      run:
+        path: find
+        args: [.]
+
+# fly -t tbs set-pipeline -p library-msa -c ./ci/pipeline.yaml 

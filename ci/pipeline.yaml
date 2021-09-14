@@ -1,10 +1,35 @@
 ---
+resource_types:
+- name: kpack-image
+  type: registry-image
+  source:
+    repository: gcr.io/cf-build-service-public/concourse-kpack-resource
+    tag: "1.0"
+
 resources:
 - name: source-code
   type: git
   source:
     uri: https://github.com/dbaltor/library-k8s-msa.git
     branch: master
+- name: library-image
+  type: kpack-image
+  source:
+    image: "library-application"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
+- name: reader-image
+  type: kpack-image
+  source:
+    image: "library-reader"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
+- name: book-image
+  type: kpack-image
+  source:
+    image: "library-book"
+    namespace: "library-tbs"
+    kubeconfig: ((k8s-config.kubeconfig))
 
 jobs:
 - name: test-app
@@ -28,10 +53,19 @@ jobs:
         args:
         - -exec
         - |
-          cd source-code
-          ./gradlew --no-daemon testReport --parallel
+          # Install kube config file required by SC K8s
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          cd ./source-code
+          # Install stubs for SC Contract tests
+          ./gradlew reader:build -x test
+          ./gradlew reader:publishToMavenLocal
+          ./gradlew book:build -x test
+          ./gradlew book:publishToMavenLocal
+          # Run all tests and generate report
+          ./gradlew testReport
           cp -R reports ../reports
-  - task: review-results
+  - task: check-reports
     config:
       platform: linux
       image_resource:
@@ -44,5 +78,53 @@ jobs:
       run:
         path: find
         args: [.]
+  - in_parallel:
+    - put: library-image
+      params:
+        commitish: source-code/.git/ref
+    - put: reader-image
+      params:
+        commitish: source-code/.git/ref
+    - put: book-image
+      params:
+        commitish: source-code/.git/ref
 
-# fly -t tbs set-pipeline -p library-msa -c ./ci/pipeline.yaml 
+- name: deploy-app
+  plan:
+  - in_parallel:
+    - get: library-image
+      trigger: true
+    - get: reader-image
+      trigger: true
+    - get: book-image
+      trigger: true
+  - task: rollout-deployment
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # Just restarting the K8s deployment as the manifests are referring to "latest"
+          # install curl
+          apk --no-cache add curl
+          # install kubectl
+          curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          # Install kube config file
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          # Restarting the deployments
+          kubectl rollout restart deploy library-msa -n library
+          kubectl rollout restart deploy library-reader-service -n library
+          kubectl rollout restart deploy library-book-service -n library
+  #- task: recreate-deployment
+  #  file: source-code/pipeline/deploy-image.yml
+  #  params:
+  #    KUBECONFIG: ((k8s-config.kubeconfig))
+
+# fly -t tbs set-pipeline -p library-msa -c ./pipeline.yaml 

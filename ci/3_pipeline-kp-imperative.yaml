@@ -1,0 +1,105 @@
+---
+resources:
+- name: source-code
+  type: git
+  source:
+    uri: https://github.com/dbaltor/library-k8s-msa.git
+    branch: master
+
+jobs:
+- name: test-app
+  plan:
+  - get: source-code
+    trigger: true
+  - task: generate-kubeconfig
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      outputs:
+      - name: kube-config
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          echo -n "((k8s-config.kubeconfig))" > config
+          cat config
+          cp ./config ./kube-config
+  - task: run-tests
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: gradle
+          tag: jdk11
+      container_limits:
+        cpu: 0
+        memory: 0
+      inputs:
+      - name: source-code
+      - name: kube-config
+      outputs:
+      - name: reports
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          echo '# Installing kube config file required by SC k8s'
+          mkdir ~/.kube
+          cp ./kube-config/config ~/.kube/
+          cd ./source-code
+          ./gradlew reader:build -x test
+          ./gradlew reader:publishToMavenLocal
+          ./gradlew book:build -x test
+          ./gradlew book:publishToMavenLocal
+          ./gradlew testReport
+          cp -R reports ../reports
+  - task: check-results
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      inputs:
+      - name: reports
+      run:
+        path: find
+        args: [.]
+  - put: application-image
+    params:
+      commitish: source-code/.git/ref
+- name: package-app
+  plan:
+  - get: source-code
+    #passed:
+    #- test-app
+    trigger: true
+  - task: run-build-service
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: kpack/kp}
+      inputs:
+      - name: source-code
+      outputs:
+      - name: build-report
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          kp image save library-application \
+            --namespace library-tbs \
+            --tag harbor.system.richmond.cf-app.com/msa/library-application \
+            --git https://github.com/dbaltor/library-k8s-msa.git \
+            --git-revision ./source-code/.git/ref
+            --env BP_GRADLE_BUILD_ARGUMENTS="--no-daemon application:assemble"
+            --env BP_GRADLE_BUILT_MODULE=application
+          
+
+# fly -t tbs set-pipeline -p library-msa -c ./ci/pipeline.yaml 
