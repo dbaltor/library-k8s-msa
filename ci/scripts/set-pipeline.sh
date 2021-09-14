@@ -26,4 +26,4 @@ echo "Using the following Concourse target:"
 echo "$TARGET"
 echo
 
-fly -t $TARGET set-pipeline -p library-msa -c ./pipeline.yaml
+fly -t $TARGET set-pipeline -p library-msa -c ./pipeline.yaml --load-vars-from ./resources/vars.yaml
