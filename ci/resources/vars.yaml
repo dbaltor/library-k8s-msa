@@ -1,3 +1,4 @@
 git-repo: https://github.com/dbaltor/library-k8s-msa.git
 harbor-url: harbor.system.richmond.cf-app.com
 harbor-project: msa
+curl-url: https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl

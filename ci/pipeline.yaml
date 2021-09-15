@@ -89,15 +89,10 @@ jobs:
       params:
         commitish: source-code/.git/ref
 
-- name: deploy-app
+- name: deploy-library-app
   plan:
-  - in_parallel:
-    - get: library-image
-      trigger: true
-    - get: reader-image
-      trigger: true
-    - get: book-image
-      trigger: true
+  - get: library-image
+    trigger: true
   - task: rollout-deployment
     config:
       platform: linux
@@ -109,20 +104,68 @@ jobs:
         args:
         - -exec
         - |
-          # Just restarting the K8s deployment as the manifests are referring to "latest"
           # install curl
           apk --no-cache add curl
           # install kubectl
-          curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+          curl -LO ((curl-url))
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           # Install kube config file
           mkdir ~/.kube
           echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
-          # Restarting the deployments
+          # Just restarting the K8s deployment as the manifests refers to "latest"
           kubectl rollout restart deploy library-msa -n library
+- name: deploy-reader-service
+  plan:
+  - get: reader-image
+    trigger: true
+  - task: rollout-deployment
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # install curl
+          apk --no-cache add curl
+          # install kubectl
+          curl -LO ((curl-url))
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          # Install kube config file
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          # Just restarting the K8s deployment as the manifests refers to "latest"
           kubectl rollout restart deploy library-reader-service -n library
+
+- name: deploy-book-service
+  plan:
+  - get: book-image
+    trigger: true
+  - task: rollout-deployment
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: alpine}
+      run:
+        path: sh
+        args:
+        - -exec
+        - |
+          # install curl
+          apk --no-cache add curl
+          # install kubectl
+          curl -LO ((curl-url))
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          # Install kube config file
+          mkdir ~/.kube
+          echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
+          # Just restarting the K8s deployment as the manifests refers to "latest"
           kubectl rollout restart deploy library-book-service -n library
-  #- task: rollout-deployment
+    #- task: rollout-deployment
   #  file: ./ci/tasks/rollout.yaml
   #  params:
   #    KUBECONFIG: ((k8s-config.kubeconfig))
