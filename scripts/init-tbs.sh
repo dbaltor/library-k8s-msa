@@ -4,11 +4,11 @@ cd $(dirname $0)
 cd ..
 
 echo
-echo "Usage: $0 <registry-URL> <registry-project> <registry-ca-file> <registry-usr> <registry-pwd> <tanzunet-usr> <tanzunet-pwd>"
+echo "Usage: $0 <registry-URL> <registry-project> <registry-ca-file> <registry-usr> <registry-pwd> <tanzunet-usr> <tanzunet-pwd> <git-repo>"
 echo
 echo "==============================================================================================================="
 echo "Pre-requisite: Install on your workstation all VMware Carvel tools located at https://carvel.dev"
-echo "Pre-requisite: Create a project called 'tbs' in your Harbor to store TBS component images"
+echo "Pre-requisite: Create a project called 'tbs' in your Harbor to store the TBS component images"
 echo "==============================================================================================================="
 echo
 # Verify if parameters have been informed
@@ -19,6 +19,7 @@ DOCKER_USR=$4
 DOCKER_PWD=$5
 TANZU_USR=$6
 TANZU_PWD=$7
+GIT_REPO=$8
 if [[ $# -eq 0 ]]; then
     read -n 1 -p "The required parameters have not been informed. Do you wish to continue?" answer
     echo
@@ -38,6 +39,8 @@ if [[ $# -eq 0 ]]; then
             read -rep $'Please type in the Tanzu Network username:\n' TANZU_USR
             echo
             read -sp $'Please type in the Tanzu Network password:\n' TANZU_PWD
+            echo
+            read -sp $'Please type in the Git Repo to be used:\n' GIT_REPO
         ;;
         * )
             echo No
@@ -48,14 +51,21 @@ fi
 echo
 echo "*** Using the following Container Registry URL:"
 echo "$REGISTRY"
+echo
 echo "*** Using the following project in the Container Registry to store the built images:"
 echo "$REGISTRY_PRJ"
+echo
 echo "*** Using the following Container Registry CA file:"
 echo "$DOCKER_CA"
+echo
 echo "*** Using the following Container Registry username:"
 echo "$DOCKER_USR"
-echo "*** Using the following Tanzu Network username :"
+echo
+echo "*** Using the following Tanzu Network username:"
 echo "$TANZU_USR"
+echo
+echo "*** Using the following Git Repo to retrive the source code:"
+echo "$GIT_REPO"
 echo
 
 # Namespace to be used by kapp and kpack images
@@ -123,18 +133,21 @@ cat ./tbs/library-kp.yaml \
   | sed 's@((NAMESPACE))@'"$NAMESPACE"'@g' \
   | sed 's@((REGISTRY))@'"$REGISTRY"'@g' \
   | sed 's@((REGISTRY_PRJ))@'"$REGISTRY_PRJ"'@g' \
+  | sed 's@((GIT_REPO))@'"$GIT_REPO"'@g' \
   | kubectl apply -f -
 
 cat ./tbs/reader-kp.yaml \
   | sed 's@((NAMESPACE))@'"$NAMESPACE"'@g' \
   | sed 's@((REGISTRY))@'"$REGISTRY"'@g' \
   | sed 's@((REGISTRY_PRJ))@'"$REGISTRY_PRJ"'@g' \
+  | sed 's@((GIT_REPO))@'"$GIT_REPO"'@g' \
   | kubectl apply -f -
 
 cat ./tbs/book-kp.yaml \
   | sed 's@((NAMESPACE))@'"$NAMESPACE"'@g' \
   | sed 's@((REGISTRY))@'"$REGISTRY"'@g' \
   | sed 's@((REGISTRY_PRJ))@'"$REGISTRY_PRJ"'@g' \
+  | sed 's@((GIT_REPO))@'"$GIT_REPO"'@g' \
   | kubectl apply -f -
 
 exit 0

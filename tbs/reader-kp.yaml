@@ -10,7 +10,7 @@ spec:
     name: default
   source:
     git:
-      url: https://github.com/dbaltor/library-k8s-msa.git
+      url: ((GIT_REPO))
       revision: master
   build:
     env:
