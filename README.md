@@ -79,6 +79,26 @@ You can also access the **API Portal** and inspect all RESTful APIs published by
 
 9. Run either <code>./scripts/cleanup.sh</code> or <code>./scripts/cleanup-api.sh</code> depending on whether or not you deployed **API Gateway** and **API Portal** on step 1.  
 
+## Build and Deploy using Tanzu Build Service (TBS):
+
+As before, you are going to need both **kubectl** and **helm** installed on your workstation. You are also going to need the [VMware Carvel](https://carvel.dev) tools.
+
+[TBS](https://docs.pivotal.io/build-service/1-2/), which is a commercial product based on the amazing [kpack project](https://github.com/pivotal/kpack), is going to detect any changes on the source code stored in the git repo and automatically trigger the image building process. It is also going to rebuild the images in case of changes on the buildpacks or OS stacks being used.
+
+You are going to need a Kubernetes cluster where to install TBS on. The image building process is resource intensive so I recommend a cluster with three large worker nodes.
+
+Execute the `./scripts/init-tbs.sh` script to install TBS and configure it to immediately start building the microservice images out of the source code. It will then upload the built images to your *Harbor registry*. Here is an example of use:
+
+<code>$ ./scripts/init-tbs.sh harbor.system.richmond.cf-app.com msa ./harbor-ca.crt admin &lt;harbor-pwd&gt; &lt;tanzu-net-usr&gt; &lt;tanzu-net-pwd&gt; https://github.com/dbaltor/library-k8s-msa.git</code>
+
+You should clone this repo if you want to trigger the image building process by commiting changes to your own repo.
+
+## Cleaning up:
+
+Run <code>./scripts/cleanup-tbs.sh</code>.
+
+If the removal process fails for any reason, try to run the <code>./tbs/delete-orfan-resources.sh</code> script after uncommenting the lines at the bottom corresponding to the namespaces still hanging around.
+
 ## Architectural Decisions:  
 
 * The application follows the *microservice architecture pattern* and the back-end services are accessible through *RESTful APIs*. The front-end service implements the *Model-View-Controller (MVC) architectural pattern* which is made easy by the **Spring framework**.   
