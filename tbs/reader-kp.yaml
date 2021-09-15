@@ -1,0 +1,20 @@
+apiVersion: kpack.io/v1alpha1
+kind: Image
+metadata:
+  name: library-reader
+  namespace: ((NAMESPACE))
+spec:
+  tag: ((REGISTRY))/((REGISTRY_PRJ))/library-reader
+  builder:
+    kind: ClusterBuilder
+    name: default
+  source:
+    git:
+      url: https://github.com/dbaltor/library-k8s-msa.git
+      revision: master
+  build:
+    env:
+      - name: BP_GRADLE_BUILD_ARGUMENTS
+        value: "--no-daemon reader:assemble"
+      - name: BP_GRADLE_BUILT_MODULE
+        value: reader

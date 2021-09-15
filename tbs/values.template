@@ -1,0 +1,19 @@
+#@data/values
+---
+docker_repository: ((REGISTRY))/tbs/build-service
+docker_username: ((DOCKER_USR))
+docker_password: ((DOCKER_PWD))
+
+admin_users:
+admin_groups:
+
+ca_cert_data: 
+
+http_proxy:
+https_proxy:
+no_proxy:
+
+disable_smart_warmer:
+
+tanzunet_username: ((TANZU_USR))
+tanzunet_password: ((TANZU_PWD))
