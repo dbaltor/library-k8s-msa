@@ -41,12 +41,12 @@ Different Application Instances (containers) will render the UI using different 
 
 You can generate 10 readers at a time clicking on the *Load Readers* button.  
 You can generate 100 books at a time clicking on the *Load Books* button. The first 40 books will be evenly borrowed by some readers.  
-You can visualise the list of readers and books following the corresponding links. Use the browser's back buttom to return to the home page.  
+You can visualise the list of readers and books following the corresponding links. Use the browser's back button to return to the home page.  
 
 ## Build:
 
 The build process requires that your workstation have both **Docker** (used by *gradle bootBuildImage* ) and **Maven** (used by *Spring Cloud Contract*) installed.   
-Execute the `./scripts/build.sh` script to build everything and push the newly built constainers to your constainer registry. Make sure you are logged in your registry through `docker login` before starting. The example below is using *Harbor*:  
+Execute the `./scripts/build.sh` script to build everything and push the newly built containers to your container registry. Make sure you are logged in your registry through `docker login` before starting. The example below is using *Harbor*:  
 
 <code>$ ./scripts/build.sh HARBOR-URL/PROJECT</code>
 
@@ -54,9 +54,9 @@ Execute the `./scripts/build.sh` script to build everything and push the newly b
 
 You are going to need both **kubectl** and **helm** installed on your workstation. Make sure you are connected to your Kubernetes cluster before starting. The installation will create a *library namespace* to hold everything.
 
-1. Run <code>./scripts/init.sh CONTAINER-REGISTRY-URL</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloanding both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh PATH-TO-SCG4K8s-INSTALL-DIR PATH-TO-API-PORTAL-INSTALL-DIR CONTAINER-REGISTRY-URL</code>, passing in  
+1. Run <code>./scripts/init.sh CONTAINER-REGISTRY-URL</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloading both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh PATH-TO-SCG4K8s-INSTALL-DIR PATH-TO-API-PORTAL-INSTALL-DIR CONTAINER-REGISTRY-URL</code>, passing in  
    1. PATH-TO-SCG4K8s-INSTALL-DIR: path to the Spring Cloud Gateway directory
-   2. PATH-TO-API-PORTAL-INSTALL-DIR: path to the API Portal diractory
+   2. PATH-TO-API-PORTAL-INSTALL-DIR: path to the API Portal directory
    3. CONTAINER-REGISTRY-URL: URL to the registry where the built images have been uploaded to
 
 2. Use the published IP address (or hostname if you have configured one) to access the application running on Kubernetes. You will notice that the application has detected it is running on K8s :)  
@@ -81,17 +81,17 @@ You can also access the **API Portal** and inspect all RESTful APIs published by
 
 ## Build and Deploy using Tanzu Build Service (TBS):
 
-You are also going to need the [VMware Carvel](https://carvel.dev) tools installed on your workstation to go through this section.
+You are also going to need **curl** and the [VMware Carvel](https://carvel.dev) tools installed on your workstation to go through this section.
 
 [TBS](https://docs.pivotal.io/build-service/1-2/), which is a commercial product based on the amazing [kpack project](https://github.com/pivotal/kpack), is going to detect any changes on the source code stored in the git repo and automatically trigger the image building process. It is also going to rebuild the images in case of changes on the buildpacks or OS stacks being used.
 
-You are going to need a Kubernetes cluster where to install TBS on. The image building process is resource intensive so I recommend a cluster with three large worker nodes.
+You need access to a Kubernetes cluster where to install TBS on. The image building process is resource intensive so I recommend a cluster with three large (4 cores, 16GB) worker nodes.
 
 Execute the `./scripts/init-tbs.sh` script to install TBS and configure it to immediately start building the microservice images out of the source code. It will then upload the built images to your *Harbor registry*. Here is an example of use:
 
 <code>$ ./scripts/init-tbs.sh harbor.system.richmond.cf-app.com msa ./harbor-ca.crt admin &lt;harbor-pwd&gt; &lt;tanzu-net-usr&gt; &lt;tanzu-net-pwd&gt; https://github.com/dbaltor/library-k8s-msa.git</code>
 
-You should clone this repo if you want to trigger the image building process by commiting changes to your own repo.
+You should clone this repo if you want to trigger the image building process by committing changes to your own repo.
 
 ## Cleaning up:
 
