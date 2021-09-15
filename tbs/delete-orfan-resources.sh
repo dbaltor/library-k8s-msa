@@ -40,3 +40,9 @@ kubectl delete clusterrolebinding/build-service-warmer-role-binding
 kubectl delete clusterrolebinding/build-service-dependency-updater-role-binding 
 kubectl delete clusterrole/custom-stack-editor-role 
 kubectl delete customresourcedefinition/customstacks.stacks.stacks-operator.tanzu.vmware.com 
+
+# Manually delete the namespaces below if needed, should the regular removal process have failed.
+#kubectl delete ns library-tb
+#kubectl delete ns build-service
+#kubectl delete ns kpack
+#kubectl delete ns stacks-operator-system
