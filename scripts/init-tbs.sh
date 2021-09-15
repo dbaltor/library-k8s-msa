@@ -7,8 +7,7 @@ echo
 echo "Usage: $0 <registry-URL> <registry-project> <registry-ca-file> <registry-usr> <registry-pwd> <tanzunet-usr> <tanzunet-pwd> <git-repo>"
 echo
 echo "==============================================================================================================="
-echo "Pre-requisite: Install on your workstation all VMware Carvel tools located at https://carvel.dev"
-echo "Pre-requisite: Create a project called 'tbs' in your Harbor to store the TBS component images"
+echo "Pre-requisite: You are going to need curl and all the VMware Carvel tools located at https://carvel.dev"
 echo "==============================================================================================================="
 echo
 # Verify if parameters have been informed
@@ -75,6 +74,12 @@ kubectl create ns $NAMESPACE
 # Logging in the docker repos
 echo $DOCKER_PWD | docker login -u $DOCKER_USR --password-stdin $REGISTRY
 echo $TANZU_PWD | docker login -u $TANZU_USR --password-stdin registry.pivotal.io 
+
+# Creating the tbs project in harbor
+curl -H "Content-Type: application/json" \
+  -u "$DOCKER_USR":"$DOCKER_PWD" -i -k \
+  -X POST -d '{"project_name": "tbs", "public": true}' \
+  https://"$REGISTRY":443/api/v2.0/projects
 
 # Copying bundle from the Tanzu Network to the private registry
 imgpkg copy -b "registry.pivotal.io/build-service/bundle:1.2.2" --to-repo $REGISTRY/tbs/build-service --registry-verify-certs=false
