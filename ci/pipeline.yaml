@@ -58,9 +58,7 @@ jobs:
           echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
           cd ./source-code
           # Install stubs for SC Contract tests
-          ./gradlew reader:build -x test
           ./gradlew reader:publishToMavenLocal
-          ./gradlew book:build -x test
           ./gradlew book:publishToMavenLocal
           # Run all tests and generate report
           ./gradlew testReport

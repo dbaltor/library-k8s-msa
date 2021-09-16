@@ -35,9 +35,7 @@ jobs:
           mkdir ~/.kube
           echo -n "((k8s-config.kubeconfig))" > ~/.kube/config
           cd ./source-code
-          ./gradlew reader:build -x test
           ./gradlew reader:publishToMavenLocal
-          ./gradlew book:build -x test
           ./gradlew book:publishToMavenLocal
           ./gradlew testReport
           cp -R reports ../reports

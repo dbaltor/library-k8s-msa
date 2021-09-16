@@ -29,22 +29,12 @@ echo "Using the following Container Registry URL:"
 echo "$REGISTRY"
 echo
 
-./gradlew clean reader:build -x test
-ret=$?
-if [ $ret -ne 0 ]; then
-  exit $ret
-fi
 ./gradlew reader:publishToMavenLocal
 ret=$?
 if [ $ret -ne 0 ]; then
   exit $ret
 fi
 
-./gradlew clean book:build -x test
-ret=$?
-if [ $ret -ne 0 ]; then
-  exit $ret
-fi
 ./gradlew book:publishToMavenLocal
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -52,7 +42,6 @@ if [ $ret -ne 0 ]; then
 fi
 
 ./gradlew build --parallel
-# ./gradlew clean application:build
 if [ $ret -ne 0 ]; then
   exit $ret
 fi
