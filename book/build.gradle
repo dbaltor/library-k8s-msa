@@ -1,7 +1,6 @@
 buildscript {
 	ext { 
-        verifierVersion = '2.2.4.RELEASE' // Required to use gradle publishToMavenLocal
-        // verifierVersion = '3.0.3'
+        verifierVersion = '3.0.3'
 	}
 	repositories { 
 		mavenCentral()
@@ -84,4 +83,23 @@ dependencies {
 
 contracts {
 	baseClassForTests = 'book.BookBase' // fallback base class
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact bootJar
+			artifact verifierStubsJar
+
+			// https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/273
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
+		}
+	}
 }
