@@ -7,7 +7,9 @@ echo
 echo "Usage: $0 <registry-URL> <registry-project> <registry-ca-file> <registry-usr> <registry-pwd> <tanzunet-usr> <tanzunet-pwd> <git-repo>"
 echo
 echo "==============================================================================================================="
-echo "Pre-requisite: You are going to need curl and all the VMware Carvel tools located at https://carvel.dev"
+echo "Pre-requisites:" 
+echo "You are going to need of curl, kp cli (https://network.pivotal.io/products/build-service/)"
+echo "as well as all the VMware Carvel tools (https://carvel.dev)"
 echo "==============================================================================================================="
 echo
 # Verify if parameters have been informed
@@ -100,10 +102,10 @@ cat ./tbs/values.template \
   | sed 's^((DOCKER_PWD))^'"$DOCKER_PWD"'^g' \
   | sed 's^((TANZU_USR))^'"$TANZU_USR"'^g' \
   | sed 's^((TANZU_PWD))^'"$TANZU_PWD"'^g' \
-  > ./tbs/values.yaml
+  > /tmp/deploy-values.yaml
 
 # Deploying TBS
-ytt -f ./tbs/values.yaml \
+ytt -f /tmp/deploy-values.yaml \
     -f /tmp/bundle/config/ \
     -f $DOCKER_CA \
     | kbld -f /tmp/bundle/.imgpkg/images.yml -f- \
@@ -113,7 +115,7 @@ if [ -n "$ret" ] && [ $ret -ne 0 ]; then
 fi
 
 # Deleting the file with credentials
-rm ./tbs/values.yaml
+rm /tmp/deploy-values.yaml
 
 echo
 echo "==============================================================================================================="
