@@ -4,7 +4,7 @@ This demo aims to show how easy is to deploy your microservices onto Kubernetes,
 
 Here are the original microservices deployed using **Spring Cloud** projects:
 
-![](./scMSA.png)  
+![](./pictures/scMSA.png)  
 
 
 No changes in the Feign interfaces are required. We just need to remove the dependencies on Spring Cloud Netflix and Spring Cloud Config and add the following one to **Spring Cloud Kubernetes** to our `build.gradle` file as follows:
@@ -33,7 +33,7 @@ combined with the following Kubernetes configuration:
 
 Each service queries the K8s API to discover all the others and starts automatically using *client-side load balancing*. The applications' configuration can keep being externalised and stored in **Kubernetes config maps**. We therefore just need to deploy our *API Gateway*.  
 
-![](./scMSA4K8s.png)  
+![](./pictures/scMSA4K8s.png)  
 
 
 The front-end service will configure its home page when running on Kubernetes.  
@@ -99,9 +99,23 @@ You might clone this repo if you would like to trigger the image building proces
 
 ## Cleaning up:
 
-Run <code>./scripts/cleanup-tbs.sh</code>.
+Run <code>./scripts/cleanup-tbs.sh</code> to remove TBS from your cluster.
 
 If the removal process fails for any reason, try to run the <code>./tbs/delete-orfan-resources.sh</code> script after uncommenting the lines at the bottom corresponding to the namespaces still hanging around.
+
+## Continuous Integration - Automating TBS building with Concourse:
+
+The value of cloud-native apps is fully realised only when we can deploy new releases with the push of a button. So why not to integrate the building image process into our CI/CD pipelines. Here I am going to use the amazing [Concourse CI](https://concourse-ci.org).
+
+![](./pictures/concourse.png)  
+
+Having already installed TBS in the previous section, all you need to do is to run the script below. It is going to install Concourse on your cluster and set your pipeline to test your microservices, build the images and deploy the apps.
+
+<code>./scripts/init-ci.sh</code>
+
+## Cleaning up:
+
+Run <code>./scripts/cleanup-ci.sh</code> to remove Concourse from your cluster.
 
 ## Architectural Decisions:  
 
