@@ -81,7 +81,7 @@ You can also access the **API Portal** and inspect all RESTful APIs published by
 
 ## Build and Deploy using Tanzu Build Service (TBS):
 
-You are also going to need **curl** and the [VMware Carvel](https://carvel.dev) tools installed on your workstation to go through this section.
+You are also going to need **curl**, the [kp cli](https://network.pivotal.io/products/build-service/) and the [VMware Carvel](https://carvel.dev) tools installed on your workstation to go through this section.
 
 [TBS](https://docs.pivotal.io/build-service/1-2/), which is a commercial product based on the amazing [kpack project](https://github.com/pivotal/kpack), is going to detect any changes on the source code stored in the git repo and automatically trigger the image building process. It is also going to rebuild the images in case of changes on the buildpacks or OS stacks being used.
 
