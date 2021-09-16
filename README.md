@@ -107,8 +107,6 @@ If the removal process fails for any reason, try to run the <code>./tbs/delete-o
 
 The value of cloud-native apps is fully realised only when we can deploy new releases with the push of a button. So why not to integrate the building image process into our CI/CD pipelines. Here I am going to use the amazing [Concourse CI](https://concourse-ci.org).
 
-
-
 Having already installed TBS in the previous section, all you need to do is to run the script below. It is going to install Concourse on your cluster and set your pipeline to test your microservices, build the images and deploy the apps.
 
 <code>./scripts/init-ci.sh</code>
@@ -116,6 +114,9 @@ Having already installed TBS in the previous section, all you need to do is to r
 After executing all the steps required by the script above, you can access the Concourse web UI at http://concourse-web.concourse.svc.cluster.local:8080/teams/main/pipelines/library-msa and see your pipeline working as showed below.
 
 ![](./pictures/concourse.png)  
+
+**IMPORTANT NOTICE**  
+You can run all the other sections on the Kubernetes ditro of your choice, but as of the time of writing the [concourse-kpack-resource](https://github.com/vmware-tanzu/concourse-kpack-resource) I used in the Concourse pipeline only works with [TKGI](https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid-Integrated-Edition/index.html) or [GKE](https://cloud.google.com/kubernetes-engine) clusters.
 
 ## Cleaning up:
 
