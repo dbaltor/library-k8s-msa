@@ -65,7 +65,9 @@ echo "Log in with the username/password as test/test."
 echo "You might get the 'Invalid Token' error message if your browser changes the URL to 127.0.0.1."
 echo "Just replace the IP 127.0.0.1 for the hostname 'concourse-web.concourse.svc.cluster.local'"
 echo
-echo "Install fly (the Concourse CLI) by downloading it from the web UI and running the following command:"
+echo "Install fly (the Concourse CLI) by downloading it from the web UI."
+echo "The download link is located at the lower right corner of the page."
+echo "Install the binary executing the following command:"
 echo "sudo install -o 0 -g 0 -m 0755 fly /usr/local/bin/fly"
 echo "==============================================================================================================="
 echo
