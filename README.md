@@ -85,13 +85,17 @@ You are also going to need **curl** and the [VMware Carvel](https://carvel.dev) 
 
 [TBS](https://docs.pivotal.io/build-service/1-2/), which is a commercial product based on the amazing [kpack project](https://github.com/pivotal/kpack), is going to detect any changes on the source code stored in the git repo and automatically trigger the image building process. It is also going to rebuild the images in case of changes on the buildpacks or OS stacks being used.
 
-You need access to a Kubernetes cluster where to install TBS on. The image building process is resource intensive so I recommend a cluster with three large (4 cores, 16GB) worker nodes.
+You need access to a Kubernetes cluster where to install TBS on. The image building process is resource intensive so I recommend a cluster with 3x large worker nodes (4 cores, 16GB RAM and 100GB ephemeral disk).
 
 Execute the `./scripts/init-tbs.sh` script to install TBS and configure it to immediately start building the microservice images out of the source code. It will then upload the built images to your *Harbor registry*. Here is an example of use:
 
 <code>$ ./scripts/init-tbs.sh harbor.system.richmond.cf-app.com msa ./harbor-ca.crt admin &lt;harbor-pwd&gt; &lt;tanzu-net-usr&gt; &lt;tanzu-net-pwd&gt; https://github.com/dbaltor/library-k8s-msa.git</code>
 
-You should clone this repo if you want to trigger the image building process by committing changes to your own repo.
+It's possible to follow the building process of the images using the following command:
+
+<code>kp build list -n library-tbs</code>
+
+You might clone this repo if you would like to trigger the image building process by committing changes to your own repo.
 
 ## Cleaning up:
 
