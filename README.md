@@ -48,16 +48,16 @@ You can visualise the list of readers and books following the corresponding link
 The build process requires that your workstation have both **Docker** (used by *gradle bootBuildImage* ) and **Maven** (used by *Spring Cloud Contract*) installed.   
 Execute the `./scripts/build.sh` script to build everything and push the newly built containers to your container registry. Make sure you are logged in your registry through `docker login` before starting. The example below is using *Harbor*:  
 
-<code>$ ./scripts/build.sh HARBOR-URL/PROJECT</code>
+<code>$ ./scripts/build.sh &lt;HARBOR-URL&gt;/&lt;PROJECT&gt;</code>
 
 ## Deploy and run on K8s:  
 
 You are going to need both **kubectl** and **helm** installed on your workstation. Make sure you are connected to your Kubernetes cluster before starting. The installation will create a *library namespace* to hold everything.
 
-1. Run <code>./scripts/init.sh CONTAINER-REGISTRY-URL</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloading both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh PATH-TO-SCG4K8s-INSTALL-DIR PATH-TO-API-PORTAL-INSTALL-DIR CONTAINER-REGISTRY-URL</code>, passing in  
-   1. PATH-TO-SCG4K8s-INSTALL-DIR: path to the Spring Cloud Gateway directory
-   2. PATH-TO-API-PORTAL-INSTALL-DIR: path to the API Portal directory
-   3. CONTAINER-REGISTRY-URL: URL to the registry where the built images have been uploaded to
+1. Run <code>./scripts/init.sh &lt;CONTAINER-REGISTRY-URL&gt;</code> and be patient. It will take some time but everything will be deployed and configured, including a public IP address assigned to the newly created ingress controller exposing the UI application. If you want to add **Spring Cloud Gateway for Kubernetes** integrated with **API Portal** to your deployment, after downloading both products from the [VMware Tanzu Network](https://network.pivotal.io), run instead <code>./scripts/init-api.sh &lt;PATH-TO-SCG4K8s-INSTALL-DIR&gt; &lt;PATH-TO-API-PORTAL-INSTALL-DIR&gt; &lt;CONTAINER-REGISTRY-URL&gt;</code>, passing in  
+   1. &lt;PATH-TO-SCG4K8s-INSTALL-DIR&gt;: path to the Spring Cloud Gateway directory
+   2. &lt;PATH-TO-API-PORTAL-INSTALL-DIR&gt;: path to the API Portal directory
+   3. &lt;CONTAINER-REGISTRY-URL&gt;: URL to the registry where the built images have been uploaded to
 
 2. Use the published IP address (or hostname if you have configured one) to access the application running on Kubernetes. You will notice that the application has detected it is running on K8s :)  
 
@@ -95,7 +95,7 @@ It's possible to follow the building process of the images using the following c
 
 <code>kp build list -n library-tbs</code>
 
-You might clone this repo if you would like to trigger the image building process by committing changes to your own repo.
+You might want to clone this repo if you would like to trigger the image building process by committing changes to your own repo.
 
 ## Cleaning up:
 
