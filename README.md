@@ -115,16 +115,16 @@ After executing all the steps required by the script above, you can access the C
 
 ![](./pictures/concourse.png)  
 
-After the initial execution to finish, you can test your new pipeline in action practing CI/CD.  
+After the initial execution to finish, you can test your new pipeline in action practicing CI/CD.  
 Go to the <code>application/src/main/resources/templates/Index.html</code> file and find the following line of code:
 
- <code>&lt;img th:src="@{k8s.png}" width="200" height="200"/&gt;</code>  
+<code>&lt;img th:src="@{k8s.png}" width="200" height="200"/&gt;</code>  
 
 Change the image reference from *k8s.png* to *tanzu.png* as per below:
 
- <code>&lt;img th:src="@{tanzu.png}" width="200" height="200"/&gt;</code>  
+<code>&lt;img th:src="@{tanzu.png}" width="200" height="200"/&gt;</code>  
 
- Save the file, commit and push the change. The pipeline should restart its work after some seconds. If that doesn't happen, *please make sure the pipeline is not paused*. Wait for the full conclusion which is going to take some minutes and then refresh the application home page to see the change. **Long live to DevOps!**
+Save the file, commit and push the change. The pipeline should restart its work after some seconds. If that doesn't happen, *please make sure the pipeline is not paused*. Wait for the full conclusion which is going to take some minutes and then refresh the application home page to see the change. **Long live to DevOps!**
 
 *IMPORTANT NOTICE*  
 You can run all the other sections on the Kubernetes ditro of your choice, but as of the time of writing the [concourse-kpack-resource](https://github.com/vmware-tanzu/concourse-kpack-resource) I used in the Concourse pipeline only works with [TKGI](https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid-Integrated-Edition/index.html) or [GKE](https://cloud.google.com/kubernetes-engine) clusters.
