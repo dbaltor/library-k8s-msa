@@ -71,13 +71,24 @@ You are going to need both **kubectl** and **helm** installed on your workstatio
 
 7. Navigate to the *List of Books* page. Borrow a book to some reader who hasn't yet borrowed any books. The operation is to succeed despite the **Reader** service being down. This is the *circuit breaker pattern* in action.
 
-8. (Optional) If you have installed **Spring Cloud Gateway** on step 1, you can now access the back-end services' RESTful APIs through the **API Gateway**. For example, assuming you have assigned the `gateway.library.example.com` hostname to your gateway, you can now retrieve the list of books running  
-<code>http gateway.library.example.com/library-book-service/books</code>  
-You can also access the **API Portal** and inspect all RESTful APIs published by the back-end services. 
+8. (Optional) If you have installed **Spring Cloud Gateway** on the step 1, you can now access the back-end services' RESTful APIs through the **API Gateway**. For example, assuming you have assigned the `gateway.library.example.com` hostname to your gateway, you can now drive the application through the API gateway. Here are some examples of operations: 
+
+ <code>http post "gateway.library.example.com/library-reader-service/readers/commands/load?count=10"</code>  
+ <code>http post "gateway.library.example.com/library-book-service/books/commands/load?count=100"</code>  
+ <code>http gateway.library.example.com/library-reader-service/readers</code>  
+ <code>http gateway.library.example.com/library-book-service/books</code>  
+ <code>http post "gateway.library.example.com/library-book-service/books/commands/borrow" readerId=2 bookIds:='[73]'</code>  
+ <code>http post "gateway.library.example.com/library-book-service//books/commands/return" readerId=2 bookIds:='[73]'</code>  
+ <code>http post gateway.library.example.com/library-reader-service/readers/commands/cleanup</code>  
+ <code>http post gateway.library.example.com/library-book-service/books/commands/cleanup</code>  
+
+You can also access the **API Portal** to inspect and test all RESTful APIs published by the back-end services in a very convenient way as showed below.   
+
+![](./pictures/api-portal.png)  
 
 ## Cleaning up:
 
-9. Run either <code>./scripts/cleanup.sh</code> or <code>./scripts/cleanup-api.sh</code> depending on whether or not you deployed **API Gateway** and **API Portal** on step 1.  
+9. Run either <code>./scripts/cleanup.sh</code> or <code>./scripts/cleanup-api.sh</code> depending on whether or not you deployed **API Gateway** and **API Portal** on the step 1.  
 
 ## Build and Deploy using Tanzu Build Service (TBS):
 
