@@ -106,7 +106,7 @@ It's possible to follow the building process of the images using the following c
 
 <code>kp build list -n library-tbs</code>
 
-You might want to clone this repo if you would like to trigger the image building process by committing changes to your own repo.
+You might want to fork this repo if you would like to trigger the image building process by committing changes to your own repo.
 
 ## Cleaning up:
 
