@@ -45,7 +45,7 @@ You can visualise the list of readers and books following the corresponding link
 
 ## Build:
 
-The build process requires that your workstation have both **Docker** (used by *gradle bootBuildImage* ) and **Maven** (used by *Spring Cloud Contract*) installed.   
+The build process requires that your workstation have **Docker** (used by *gradle bootBuildImage* ) installed.   
 Execute the `./scripts/build.sh` script to build everything and push the newly built containers to your container registry. Make sure you are logged in your registry through `docker login` before starting. The example below is using *Harbor*:  
 
 <code>$ ./scripts/build.sh &lt;HARBOR-URL&gt;/&lt;PROJECT&gt;</code>
