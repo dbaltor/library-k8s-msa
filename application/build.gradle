@@ -38,7 +38,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+	// Classic Kubernetes client
+	// implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all'
+	// Fabric8 Kubernetes client
+	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-all'
 	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'io.github.openfeign:feign-okhttp'
