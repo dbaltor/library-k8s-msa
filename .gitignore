@@ -11,6 +11,8 @@ build
 bin
 */.classpath
 reports
+*.bin
+*.lock
 
 # Compiled class file
 *.class
