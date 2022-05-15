@@ -1,6 +1,6 @@
 # Example of microservice-based application running on Kubernetes
 
-This demo aims to show how easy is to deploy your microservices onto Kubernetes, if you need to, so long as you have developed them using the [Spring Cloud](https://spring.io/projects/spring-cloud) projects: **Spring Cloud Netflix**, **Spring Cloud OpenFeign**, **Spring Cloud Config** and **Spring Cloud Gateway**.  
+This demo aims to show how easy is to deploy your microservices onto Kubernetes, if you need to, so long as you have developed them using the following [Spring Cloud](https://spring.io/projects/spring-cloud) projects: **Spring Cloud Netflix**, **Spring Cloud OpenFeign**, **Spring Cloud Config** and **Spring Cloud Gateway**.  
 
 Here are the original microservices deployed using **Spring Cloud** projects:
 
@@ -52,7 +52,7 @@ You can visualise the list of readers and books following the corresponding link
 
 ## Build:
 
-The build process requires that your workstation have **Docker** (used by *gradle bootBuildImage* ) installed.   
+The build process requires that your workstation have **Docker** installed (used by *gradle bootBuildImage*).   
 Execute the `./scripts/build.sh` script to build everything and push the newly built containers to your container registry. Make sure you are logged in your registry through `docker login` before starting. The example below is using *Harbor*:  
 
 ```
